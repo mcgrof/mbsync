@@ -100,3 +100,45 @@ Channel inbox
 Master :server:INBOX
 Slave :mirror:server
 Patterns *
+
+# A gmail example
+#
+# First generic defaults
+Create Slave
+SyncState *
+
+IMAPAccount gmail
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+SSLType IMAPS
+Host imap.gmail.com
+User user@gmail.com
+# Must be an application specific password, otherwise google will deny access.
+Pass example
+# Throttle mbsync so we don't go over gmail's quota: OVERQUOTA error would
+# eventually be returned otherwise. For more details see:
+# https://sourceforge.net/p/isync/mailman/message/35458365/
+PipelineDepth 50
+
+MaildirStore gmail-local
+# The trailing "/" is important
+Path ~/Mail/
+Inbox ~/Mail/Inbox
+Subfolders Verbatim
+
+IMAPStore gmail-remote
+Account gmail
+
+# An example of nested labels on gmail, useful for large projects with
+# many mailing lists. We have to flatten out the structure locally.
+Channel linux-xfs
+Master :gmail-remote:"linux-kernel/linux-xfs"
+Slave :gmail-local:linux-kernel.linux-xfs
+
+Channel linux-fsdevel
+Master :gmail-remote:"linux-kernel/linux-fsdevel"
+Slave :gmail-local:linux-kernel.linux-fsdevel
+
+# Get all the gmail channels together into a group.
+Group googlemail
+Channel linux-xfs
+Channel linux-fsdevel
