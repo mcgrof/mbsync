@@ -1,0 +1,11 @@
+[Unit]
+Description=mbsync service (oneshot)
+Documentation=man:mbsync(1)
+ConditionPathExists=%h/.mbsyncrc
+
+[Service]
+Type=oneshot
+ExecStart=@BINDIR@/mbsync -V -a
+
+[Install]
+WantedBy=mail.target

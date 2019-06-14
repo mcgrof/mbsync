@@ -730,6 +730,53 @@ before the mailbox is expunged.
 There is no risk as long as the IMAP mailbox is accessed by only one client
 (including \fBmbsync\fR) at a time.
 ..
+.SH USER SYSTEMD UNITS
+On systemd capable systems users can rely on the user systemd unit file timer to
+configure what configuration file to use and how often \fBmbsync\fR should
+check mail for you. The system default settings are configured to check for
+mail every 15 minutes for all of your configured channels, and will only
+trigger if you have your home directory configuration file
+.B ~/.mbsyncrc.
+If
+.B ~/.mbsyncrc
+is not present the timmer will not run.
+.TP
+To enable and start the timer:
+.br
+.B systemctl --user enable mbsync-oneshot.timer
+.br
+.B systemctl --user start mbsync-oneshot.timer
+.P
+If you enabled the timer but forgot to write your
+.B ~/.mbsyncrc.
+configuration file you can
+start the timer after you've created your
+.B ~/.mbsyncrc.
+.TP
+To stop and disable the timer:
+.br
+.B systemctl --user stop mbsync-oneshot.timer
+.br
+.B systemctl --user disable mbsync-oneshot.timer
+.P
+If you need to override the system settings you can copy the system unit
+and modify alternatives on your your
+.B ${XDG_DATA_HOME}/systemd/user
+(
+.B .config/systemd/user/
+)
+directory.
+.TP
+Then let systemd know about these custom files's availability:
+.br
+.B systemctl --user daemon-reload
+.P
+You can then enable and start timer as described above.
+.P
+Custom systemd unit timer and service files can be used, for instance,
+to allow you to fetch mail at different frequencies for different
+configurations.
+..
 .SH FILES
 .TP
 .B ~/.mbsyncrc
@@ -737,6 +784,18 @@ Default configuration file
 .TP
 .B ~/.mbsync/
 Directory containing synchronization state files
+.TP
+Only applicable on systemd systems:
+.TP
+.B /usr/lib/systemd/user/mbsync-oneshot.timer
+System mbsync timer,
+.B how often
+to run the mbsync systemd unit.
+.TP
+.B /usr/lib/systemd/user/mbsync-oneshot.service
+System default mbsync service unit file,
+.B how
+to run mbsync.
 ..
 .SH SEE ALSO
 mdconvert(1), mutt(1), maildir(5)

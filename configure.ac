@@ -196,7 +196,20 @@ fi
 AM_CONDITIONAL(with_compat, test "x$ob_cv_enable_compat" != xno -a "x$ac_cv_berkdb4" = xyes)
 AM_CONDITIONAL(with_mdconvert, test "x$ac_cv_berkdb4" = xyes)
 
-AC_CONFIG_FILES([Makefile src/Makefile isync.spec])
+AC_CONFIG_FILES([Makefile
+		 Config.mk
+		 units/mbsync-oneshot.service
+		 units/mbsync-oneshot.timer
+		 src/Makefile
+		 isync.spec])
+m4_include([m4/features.m4])
+m4_include([m4/systemd.m4])
+m4_include([m4/paths.m4])
+
+AX_LOCAL_EXPAND_CONFIG()
+AX_AVAILABLE_SYSTEMD()
+AM_CONDITIONAL(CONFIG_SYSTEMD_INIT, [test x"$systemdisinit" = xy])
+AM_CONDITIONAL(CONFIG_SYSTEMD_DEV, [test x"$systemddev" = xy])
 AC_OUTPUT
 
 AC_MSG_RESULT()

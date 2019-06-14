@@ -1,3 +1,5 @@
+-include $(CURDIR)/Config.mk
+
 SUBDIRS = src
 bin_SCRIPTS = mbsync-get-cert
 EXTRA_DIST = debian isync.spec $(bin_SCRIPTS)
@@ -73,5 +75,14 @@ rpm: dist
 
 rpm-ia32: dist
 	CFLAGS="-O2 -m32 -march=i686" rpmbuild --target i686-unknown-linux --clean -ta $(PACKAGE)-$(VERSION).tar.gz
+
+.PHONY: reload
+reload:
+	-systemctl daemon-reload
+
+systemduserunitdir = @systemduserunitdir@
+systemduserunit_DATA = units/mbsync-oneshot.service units/mbsync-oneshot.timer
+
+install-data-hook: reload
 
 doc_DATA = README TODO NEWS ChangeLog AUTHORS

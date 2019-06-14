@@ -30,3 +30,6 @@
 
 Makefile
 Makefile.in
+Config.mk
+units/mbsync-oneshot.service
+units/mbsync-oneshot.timer
